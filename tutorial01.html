@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Tutorial01</title>
+</head>
+<body>
+	<canvas id="mainCanvas" style="border: none;" width="500" height="500"></canvas>
+</body>
+</html>
+
+<script id="shader-fs" type="x-shader/x-fragment">
+    precision mediump float;
+
+    void main(void) {
+        gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    }
+</script>
+
+<script id="shader-vs" type="x-shader/x-vertex">
+    attribute vec3 aVertexPosition;
+
+    uniform mat4 uMVMatrix;
+    uniform mat4 uPMatrix;
+
+    void main(void) {
+        gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+    }
+</script>
+<script src="http://code.jquery.com/jquery-1.8.0.min.js"></script>
+<script src="scripts/gl-matrix.min.js"></script>
+<script src="scripts/tutorial01.js"></script>
