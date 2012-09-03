@@ -219,11 +219,32 @@ function initBuffers() {
 	sphereVertexIndexBuffer.numItems = cubeVertexIndices.length;
 }
 
+function handleLoadedTexture(texture) {
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+}
+
+var neheTexture;
+function initTexture() {
+	neheTexture = gl.createTexture();
+	neheTexture.image = new Image();
+	neheTexture.image.onload = function () {
+		handleLoadedTexture(neheTexture)
+	}
+
+	neheTexture.image.src = "images\nehe.gif";
+}
+
 function webGLInit() {
 	var canvas = document.getElementById("mainCanvas");
 	initGL(canvas);
 	initShaders();
 	initBuffers();
+	initTexture();x
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
@@ -269,23 +290,18 @@ function drawScene() {
 				mvPushMatrix();
 				mat4.translate(mvMatrix, [(x - 2) * 8, (layer - 2) * -8, (y - 2) * -8]);
 
-				if (cubePgm.isOn(x,y,layer, timeNow - startTime)) {
-					mat4.rotate(mvMatrix, toRadians(rotateCubes), [1, 0, 0]);
+				//cubePgm.isOn(x,y,layer, timeNow - startTime)				
+				mat4.rotate(mvMatrix, toRadians(rotateCubes), [1, 0, 0]);
 
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnPositionBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexOnPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+				gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnPositionBuffer);
+				gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexOnPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnColorBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, sphereVertexOnColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-				} else {
+				gl.bindBuffer(gl.ARRAY_BUFFER, cubeVertexTextureCoordBuffer);
+				gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, cubeVertexTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOffPositionBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexOffPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOffColorBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, sphereVertexOffColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-				}
+				gl.activeTexture(gl.TEXTURE0);
+				gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+				gl.uniform1i(shaderProgram.samplerUniform, 0);
 
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphereVertexIndexBuffer);
 				setMatrixUniforms();
