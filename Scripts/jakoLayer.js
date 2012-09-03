@@ -61,7 +61,7 @@ function jakoLayer(programString) {
 						this.program[frameIndex] = new Array();
 
 					this.program[frameIndex].push({ x: vectorCoords.y, y: vectorCoords.x, z: layer - 1 });
-					console.log('frame: ' + frameIndex + ' x: ' + vectorCoords.x + ' y: ' + layer + ' z: ' + vectorCoords.y);
+					//console.log('frame: ' + frameIndex + ' x: ' + vectorCoords.x + ' y: ' + layer + ' z: ' + vectorCoords.y);
 
 					index += 2;
 				}

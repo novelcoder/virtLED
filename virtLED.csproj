@@ -63,6 +63,8 @@
   <ItemGroup>
     <Content Include="cubeSimulator.html" />
     <Content Include="default.html" />
+    <Content Include="images\nehe.gif" />
+    <Content Include="images\redX.gif" />
     <Content Include="moveSquare.html" />
     <Content Include="Scripts\cubeSimulator.js" />
     <Content Include="Scripts\gl-matrix.js" />
