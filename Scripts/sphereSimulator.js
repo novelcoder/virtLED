@@ -122,9 +122,9 @@ function initBuffers() {
 			var u = 1 - (longNumber / longitudeBands);
 			var v = 1 - (latNumber / latitudeBands);
 
-			vertexOffPositionData.push(radius * .2 * x);
-			vertexOffPositionData.push(radius * .2 * y);
-			vertexOffPositionData.push(radius * .2 * z);
+			vertexOffPositionData.push(radius * .8 * x);
+			vertexOffPositionData.push(radius * .8 * y);
+			vertexOffPositionData.push(radius * .8 * z);
 
 			vertexOnPositionData.push(radius * x);
 			vertexOnPositionData.push(radius * y);
