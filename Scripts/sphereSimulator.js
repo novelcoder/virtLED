@@ -85,8 +85,12 @@ function initShaders() {
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
+	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
+	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
+
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
 }
 
 function setMatrixUniforms() {
@@ -193,6 +197,7 @@ function handleLoadedTexture(texture) {
 	gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
+var redXTexture;
 var neheTexture;
 function initTexture() {
 	neheTexture = gl.createTexture();
@@ -202,6 +207,14 @@ function initTexture() {
 	}
 
 	neheTexture.image.src = "images\\nehe.gif";
+
+	redXTexture = gl.createTexture();
+	redXTexture.image = new Image();
+	redXTexture.image.onload = function () {
+		handleLoadedTexture(redXTexture)
+	}
+
+	redXTexture.image.src = "images\\redX.gif";
 }
 
 function webGLInit() {
@@ -255,7 +268,7 @@ function drawScene() {
 				mvPushMatrix();
 				mat4.translate(mvMatrix, [(x - 2) * 8, (layer - 2) * -8, (y - 2) * -8]);
 
-				//cubePgm.isOn(x,y,layer, timeNow - startTime)				
+			
 				mat4.rotate(mvMatrix, toRadians(rotateCubes), [1, 0, 0]);
 
 				gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnPositionBuffer);
@@ -265,7 +278,11 @@ function drawScene() {
 				gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, sphereVertexCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 				gl.activeTexture(gl.TEXTURE0);
-				gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+				if (cubePgm.isOn(x, y, layer, timeNow - startTime)) {
+					gl.bindTexture(gl.TEXTURE_2D, redXTexture);
+				} else {
+					gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+				}
 				gl.uniform1i(shaderProgram.samplerUniform, 0);
 
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphereVertexIndexBuffer);
