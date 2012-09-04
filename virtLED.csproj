@@ -63,6 +63,10 @@
   <ItemGroup>
     <Content Include="cubeSimulator.html" />
     <Content Include="default.html" />
+    <Content Include="lesson05\glMatrix-0.9.5.min.js" />
+    <Content Include="lesson05\index.html" />
+    <Content Include="lesson05\nehe.gif" />
+    <Content Include="lesson05\webgl-utils.js" />
     <Content Include="moveSquare.html" />
     <Content Include="Scripts\cubeSimulator.js" />
     <Content Include="Scripts\gl-matrix.js" />
