@@ -67,6 +67,8 @@
     <Content Include="lesson05\index.html" />
     <Content Include="lesson05\nehe.gif" />
     <Content Include="lesson05\webgl-utils.js" />
+    <Content Include="images\nehe.gif" />
+    <Content Include="images\redX.gif" />
     <Content Include="moveSquare.html" />
     <Content Include="Scripts\cubeSimulator.js" />
     <Content Include="Scripts\gl-matrix.js" />

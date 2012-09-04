@@ -85,9 +85,6 @@ function initShaders() {
 	shaderProgram.vertexPositionAttribute = gl.getAttribLocation(shaderProgram, "aVertexPosition");
 	gl.enableVertexAttribArray(shaderProgram.vertexPositionAttribute);
 
-	shaderProgram.vertexColorAttribute = gl.getAttribLocation(shaderProgram, "aVertexColor");
-	gl.enableVertexAttribArray(shaderProgram.vertexColorAttribute);
-
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
 }
@@ -106,6 +103,9 @@ function initBuffers() {
 	var vertexOffPositionData = [];
 	var vertexOnPositionData = [];
 
+	var normalData = [];
+	var textureCoordData = [];
+
 	for (var latNumber = 0; latNumber <= latitudeBands; latNumber++) {
 		var theta = latNumber * Math.PI / latitudeBands;
 		var sinTheta = Math.sin(theta);
@@ -122,6 +122,15 @@ function initBuffers() {
 			var u = 1 - (longNumber / longitudeBands);
 			var v = 1 - (latNumber / latitudeBands);
 
+
+			normalData.push(x);
+			normalData.push(y);
+			normalData.push(z);
+			textureCoordData.push(u);
+			textureCoordData.push(v);
+
+			//console.log("u: " + u + "v: " + v);
+
 			vertexOffPositionData.push(radius * .8 * x);
 			vertexOffPositionData.push(radius * .8 * y);
 			vertexOffPositionData.push(radius * .8 * z);
@@ -131,7 +140,7 @@ function initBuffers() {
 			vertexOnPositionData.push(radius * z);
 		}
 	}
-
+	
 
 	sphereVertexOffPositionBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOffPositionBuffer);
@@ -145,78 +154,54 @@ function initBuffers() {
 	sphereVertexOnPositionBuffer.itemSize = 3;
 	sphereVertexOnPositionBuffer.numItems = vertexOffPositionData.length / 3;
 
-	// off vertex colors
-	var colors = [];
-	colors.push([0.5, 0.0, 0.2, 1.0]);
-	colors.push([0.5, 0.2, 0.2, 1.0]);
-	colors.push([0.5, 0.4, 0.2, 1.0]);
-	colors.push([0.5, 0.6, 0.2, 1.0]);
-	colors.push([0.5, 0.8, 0.2, 1.0]);
-	colors.push([0.5, 1.0, 0.2, 1.0]);
-
-	sphereVertexOffColorBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOffColorBuffer);
-	var unpackedColors = [];
-	var colorIndex = 0;
-	for (var vert = 0; vert < sphereVertexOffPositionBuffer.numItems; vert++) {
-		unpackedColors = unpackedColors.concat(colors[colorIndex]);
-		colorIndex++;
-		if (colorIndex >= colors.length) {
-			colorIndex = 0;
-		}
-	}
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
-	sphereVertexOffColorBuffer.itemSize = 4;
-	sphereVertexOffColorBuffer.numItems = unpackedColors / 4;
-
-
-	// on vertex colors
-	var colors = [];
-	colors.push([0.5, 0.0, 1.0, 1.0]);
-	colors.push([0.5, 0.2, 1.0, 1.0]);
-	colors.push([0.5, 0.4, 1.0, 1.0]);
-	colors.push([0.5, 0.6, 1.0, 1.0]);
-	colors.push([0.5, 0.8, 1.0, 1.0]);
-	colors.push([0.5, 1.0, 1.0, 1.0]);
-
-	sphereVertexOnColorBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnColorBuffer);
-	var unpackedColors = [];
-	var colorIndex = 0;
-	for (var vert = 0; vert < sphereVertexOffPositionBuffer.numItems; vert++) {
-		unpackedColors = unpackedColors.concat(colors[colorIndex]);
-		colorIndex++;
-		if (colorIndex >= colors.length) {
-			colorIndex = 0;
-		}
-	}
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(unpackedColors), gl.STATIC_DRAW);
-	sphereVertexOnColorBuffer.itemSize = 4;
-	sphereVertexOnColorBuffer.numItems = unpackedColors / 4;
+	sphereVertexCoordBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexCoordBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordData), gl.STATIC_DRAW);
+	sphereVertexCoordBuffer.itemSize = 2;
+	sphereVertexCoordBuffer.numItems = textureCoordData / 2;
 
 	// cube vertex index
-
 	sphereVertexIndexBuffer = gl.createBuffer();
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphereVertexIndexBuffer);
 	
-	var cubeVertexIndices = [];
+	var indexData = [];
 	for (var latNumber = 0; latNumber < latitudeBands; latNumber++) {
 		for (var longNumber = 0; longNumber < longitudeBands; longNumber++) {
 			var first = (latNumber * (longitudeBands + 1)) + longNumber;
 			var second = first + longitudeBands + 1;
-			cubeVertexIndices.push(first);
-			cubeVertexIndices.push(second);
-			cubeVertexIndices.push(first + 1);
+			indexData.push(first);
+			indexData.push(second);
+			indexData.push(first + 1);
 
-			cubeVertexIndices.push(second);
-			cubeVertexIndices.push(second + 1);
-			cubeVertexIndices.push(first + 1);
+			indexData.push(second);
+			indexData.push(second + 1);
+			indexData.push(first + 1);
 		}
 	}
 	
-	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(cubeVertexIndices), gl.STATIC_DRAW);
+	gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indexData), gl.STATIC_DRAW);
 	sphereVertexIndexBuffer.itemSize = 1;
-	sphereVertexIndexBuffer.numItems = cubeVertexIndices.length;
+	sphereVertexIndexBuffer.numItems = indexData.length;
+}
+
+function handleLoadedTexture(texture) {
+	gl.bindTexture(gl.TEXTURE_2D, texture);
+	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+	gl.bindTexture(gl.TEXTURE_2D, null);
+}
+
+var neheTexture;
+function initTexture() {
+	neheTexture = gl.createTexture();
+	neheTexture.image = new Image();
+	neheTexture.image.onload = function () {
+		handleLoadedTexture(neheTexture)
+	}
+
+	neheTexture.image.src = "images\\nehe.gif";
 }
 
 function webGLInit() {
@@ -224,6 +209,7 @@ function webGLInit() {
 	initGL(canvas);
 	initShaders();
 	initBuffers();
+	initTexture();
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
@@ -269,23 +255,18 @@ function drawScene() {
 				mvPushMatrix();
 				mat4.translate(mvMatrix, [(x - 2) * 8, (layer - 2) * -8, (y - 2) * -8]);
 
-				if (cubePgm.isOn(x,y,layer, timeNow - startTime)) {
-					mat4.rotate(mvMatrix, toRadians(rotateCubes), [1, 0, 0]);
+				//cubePgm.isOn(x,y,layer, timeNow - startTime)				
+				mat4.rotate(mvMatrix, toRadians(rotateCubes), [1, 0, 0]);
 
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnPositionBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexOnPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+				gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnPositionBuffer);
+				gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexOnPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnColorBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, sphereVertexOnColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-				} else {
+				gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexCoordBuffer);
+				gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, sphereVertexCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOffPositionBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexOffPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
-
-					gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOffColorBuffer);
-					gl.vertexAttribPointer(shaderProgram.vertexColorAttribute, sphereVertexOffColorBuffer.itemSize, gl.FLOAT, false, 0, 0);
-				}
+				gl.activeTexture(gl.TEXTURE0);
+				gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+				gl.uniform1i(shaderProgram.samplerUniform, 0);
 
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphereVertexIndexBuffer);
 				setMatrixUniforms();
