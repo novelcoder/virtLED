@@ -88,9 +88,16 @@ function initShaders() {
 	shaderProgram.textureCoordAttribute = gl.getAttribLocation(shaderProgram, "aTextureCoord");
 	gl.enableVertexAttribArray(shaderProgram.textureCoordAttribute);
 
+
 	shaderProgram.pMatrixUniform = gl.getUniformLocation(shaderProgram, "uPMatrix");
 	shaderProgram.mvMatrixUniform = gl.getUniformLocation(shaderProgram, "uMVMatrix");
+	shaderProgram.nMatrixUniform = gl.getUniformLocation(shaderProgram, "uNMatrix");
 	shaderProgram.samplerUniform = gl.getUniformLocation(shaderProgram, "uSampler");
+	shaderProgram.useLightingUniform = gl.getUniformLocation(shaderProgram, "uUseLighting");
+	shaderProgram.ambientColorUniform = gl.getUniformLocation(shaderProgram, "uAmbientColor");
+	shaderProgram.lightingDirectionUniform = gl.getUniformLocation(shaderProgram, "uLightingDirection");
+	shaderProgram.directionalColorUniform = gl.getUniformLocation(shaderProgram, "uDirectionalColor");
+	shaderProgram.alphaUniform = gl.getUniformLocation(shaderProgram, "uAlpha");
 }
 
 function setMatrixUniforms() {
@@ -214,7 +221,7 @@ function initTexture() {
 		handleLoadedTexture(redXTexture)
 	}
 
-	redXTexture.image.src = "images\\redX.gif";
+	redXTexture.image.src = "images\\purple.gif";
 }
 
 function webGLInit() {
@@ -284,6 +291,17 @@ function drawScene() {
 					gl.bindTexture(gl.TEXTURE_2D, neheTexture);
 				}
 				gl.uniform1i(shaderProgram.samplerUniform, 0);
+
+				var blending = true; // for testing
+				if (blending) {
+					gl.blendFunc(gl.SRC_ALPHA, gl.ONE);
+					gl.enable(gl.BLEND);
+					gl.disable(gl.DEPTH_TEST);
+					gl.uniform1f(shaderProgram.alphaUniform, parseFloat(.8));
+				} else {
+					gl.disable(gl.BLEND);
+					gl.enable(gl.DEPTH_TEST);
+				}
 
 				gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, sphereVertexIndexBuffer);
 				setMatrixUniforms();
@@ -478,7 +496,7 @@ function handleDragOver(evt) {
 	evt.dataTransfer.dropEffect = 'copy'; // Explicitly show this is a copy.
 }
 
-//var cubePgm = new jakoLayer("1A:500\n1C:500\n1F:500\n1Y:500\n5E5U:500");
+//var cubePgm = new jakoLayer("3D:500\n");
 var cubePgm = new jakoLayer("5M:100\n4M:100\n3M:100\n2M:100\n1M2L2H2M2R2N3M:100\n1L1H1M1R1N2K2I2L2S2C2H2R2W2G2N2Q2O3L3H3M3R3N4M:100\n1L1H1R1N2K2I2S2C2W2G2Q2O3K3I3S3C3M3W3G3Q3O4L4H4R4N5G:100\n4K4I4S4C4M4W4G4G4Q4O5M:100\n3G5I5S5G5Q:100\n2G:100\n1G2H2D2G2N2F3G:100\n1H1D1G1N1F2I2C2H2M2D2N2Q2E2F2O3H3D3G3N3F4G:100\n1H1D1N1F2I2C2M2Q2E2O3I3C3M3G3Q3E3O4H4D4N4F5S:100\n4I4S4C4M4G4Q4E4O5G:100\n3S5C5M5E5O:100\n");
 
 $().ready(function () {

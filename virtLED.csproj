@@ -63,12 +63,25 @@
   <ItemGroup>
     <Content Include="cubeSimulator.html" />
     <Content Include="default.html" />
+    <Content Include="images\purple.gif" />
     <Content Include="lesson05\glMatrix-0.9.5.min.js" />
     <Content Include="lesson05\index.html" />
     <Content Include="lesson05\nehe.gif" />
     <Content Include="lesson05\webgl-utils.js" />
     <Content Include="images\nehe.gif" />
     <Content Include="images\redX.gif" />
+    <Content Include="lesson06\crate.gif" />
+    <Content Include="lesson06\glMatrix-0.9.5.min.js" />
+    <Content Include="lesson06\index.html" />
+    <Content Include="lesson06\webgl-utils.js" />
+    <Content Include="lesson07\crate.gif" />
+    <Content Include="lesson07\glMatrix-0.9.5.min.js" />
+    <Content Include="lesson07\index.html" />
+    <Content Include="lesson07\webgl-utils.js" />
+    <Content Include="lesson08\glass.gif" />
+    <Content Include="lesson08\glMatrix-0.9.5.min.js" />
+    <Content Include="lesson08\index.html" />
+    <Content Include="lesson08\webgl-utils.js" />
     <Content Include="moveSquare.html" />
     <Content Include="Scripts\cubeSimulator.js" />
     <Content Include="Scripts\gl-matrix.js" />
