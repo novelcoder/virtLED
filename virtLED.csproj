@@ -69,17 +69,12 @@
     <Content Include="lesson08\glMatrix-0.9.5.min.js" />
     <Content Include="lesson08\index.html" />
     <Content Include="lesson08\webgl-utils.js" />
-    <Content Include="Scripts\cubeSimulator.js" />
     <Content Include="Scripts\gl-matrix.js" />
     <Content Include="Scripts\gl-matrix.min.js" />
     <Content Include="Scripts\jakoLayer.js" />
     <Content Include="Scripts\jquery-1.8.0.js" />
-    <Content Include="Scripts\moveSquare.js" />
     <Content Include="Scripts\sphereSimulator.js" />
     <Content Include="Scripts\textureHandler.js" />
-    <Content Include="Scripts\tutorial01.js" />
-    <Content Include="Scripts\tutorial02.js" />
-    <Content Include="Scripts\tutorial02_common.js" />
     <Content Include="Scripts\webgl-utils.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
