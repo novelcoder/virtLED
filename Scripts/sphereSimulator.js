@@ -1,19 +1,17 @@
-﻿var gl;
+﻿///references <script src="textureHandler.js" />
+var gl;
 var mvMatrix = mat4.create();
 var pMatrix = mat4.create();
 
-var sphereVertexOffPositionBuffer;
-var sphereVertexOffColorBuffer;
-var sphereVertexOnPositionBuffer;
-var sphereVertexOnColorBuffer;
+var sphereVertexPositionBuffer;
 var sphereVertexIndexBuffer;
+var sphereTextureCoordBuffer;
 
 var shaderProgram;
 var keyDown = new Array();
 
 function initGL(canvas) {
 	try {
-		//gl = canvas.getContext("experimental-webgl");
 		gl = WebGLUtils.setupWebGL(canvas);
 		gl.viewportWidth = canvas.width;
 		gl.viewportHeight = canvas.height;
@@ -111,8 +109,7 @@ function initBuffers() {
 	var longitudeBands = 30;
 	var radius = 2;
 
-	var vertexOffPositionData = [];
-	var vertexOnPositionData = [];
+	var vertexPositionData = [];
 
 	var normalData = [];
 	var textureCoordData = [];
@@ -142,34 +139,24 @@ function initBuffers() {
 
 			//console.log("u: " + u + "v: " + v);
 
-			vertexOffPositionData.push(radius * .8 * x);
-			vertexOffPositionData.push(radius * .8 * y);
-			vertexOffPositionData.push(radius * .8 * z);
 
-			vertexOnPositionData.push(radius * x);
-			vertexOnPositionData.push(radius * y);
-			vertexOnPositionData.push(radius * z);
+			vertexPositionData.push(radius * x);
+			vertexPositionData.push(radius * y);
+			vertexPositionData.push(radius * z);
 		}
 	}
-	
 
-	sphereVertexOffPositionBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOffPositionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexOffPositionData), gl.STATIC_DRAW);
-	sphereVertexOffPositionBuffer.itemSize = 3;
-	sphereVertexOffPositionBuffer.numItems = vertexOffPositionData.length / 3;
+	sphereVertexPositionBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexPositionBuffer);
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexPositionData), gl.STATIC_DRAW);
+	sphereVertexPositionBuffer.itemSize = 3;
+	sphereVertexPositionBuffer.numItems = vertexPositionData.length / 3;
 
-	sphereVertexOnPositionBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnPositionBuffer);
-	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexOnPositionData), gl.STATIC_DRAW);
-	sphereVertexOnPositionBuffer.itemSize = 3;
-	sphereVertexOnPositionBuffer.numItems = vertexOffPositionData.length / 3;
-
-	sphereVertexCoordBuffer = gl.createBuffer();
-	gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexCoordBuffer);
+	sphereTextureCoordBuffer = gl.createBuffer();
+	gl.bindBuffer(gl.ARRAY_BUFFER, sphereTextureCoordBuffer);
 	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordData), gl.STATIC_DRAW);
-	sphereVertexCoordBuffer.itemSize = 2;
-	sphereVertexCoordBuffer.numItems = textureCoordData / 2;
+	sphereTextureCoordBuffer.itemSize = 2;
+	sphereTextureCoordBuffer.numItems = textureCoordData / 2;
 
 	// cube vertex index
 	sphereVertexIndexBuffer = gl.createBuffer();
@@ -195,41 +182,13 @@ function initBuffers() {
 	sphereVertexIndexBuffer.numItems = indexData.length;
 }
 
-function handleLoadedTexture(texture) {
-	gl.bindTexture(gl.TEXTURE_2D, texture);
-	gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
-	gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-	gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-	gl.bindTexture(gl.TEXTURE_2D, null);
-}
-
-var redXTexture;
-var neheTexture;
-function initTexture() {
-	neheTexture = gl.createTexture();
-	neheTexture.image = new Image();
-	neheTexture.image.onload = function () {
-		handleLoadedTexture(neheTexture)
-	}
-
-	neheTexture.image.src = "images\\nehe.gif";
-
-	redXTexture = gl.createTexture();
-	redXTexture.image = new Image();
-	redXTexture.image.onload = function () {
-		handleLoadedTexture(redXTexture)
-	}
-
-	redXTexture.image.src = "images\\purple.gif";
-}
-
+var textureHandler = new textureHandler();
 function webGLInit() {
 	var canvas = document.getElementById("mainCanvas");
 	initGL(canvas);
 	initShaders();
 	initBuffers();
-	initTexture();
+	textureHandler.init(gl);
 
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	gl.enable(gl.DEPTH_TEST);
@@ -278,17 +237,17 @@ function drawScene() {
 			
 				mat4.rotate(mvMatrix, toRadians(rotateCubes), [1, 0, 0]);
 
-				gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexOnPositionBuffer);
-				gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexOnPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
+				gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexPositionBuffer);
+				gl.vertexAttribPointer(shaderProgram.vertexPositionAttribute, sphereVertexPositionBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
-				gl.bindBuffer(gl.ARRAY_BUFFER, sphereVertexCoordBuffer);
-				gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, sphereVertexCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
+				gl.bindBuffer(gl.ARRAY_BUFFER, sphereTextureCoordBuffer);
+				gl.vertexAttribPointer(shaderProgram.textureCoordAttribute, sphereTextureCoordBuffer.itemSize, gl.FLOAT, false, 0, 0);
 
 				gl.activeTexture(gl.TEXTURE0);
 				if (cubePgm.isOn(x, y, layer, timeNow - startTime)) {
-					gl.bindTexture(gl.TEXTURE_2D, redXTexture);
+					gl.bindTexture(gl.TEXTURE_2D, textureHandler.sphereOnTexture);
 				} else {
-					gl.bindTexture(gl.TEXTURE_2D, neheTexture);
+					gl.bindTexture(gl.TEXTURE_2D, textureHandler.sphereOffTexture);
 				}
 				gl.uniform1i(shaderProgram.samplerUniform, 0);
 
