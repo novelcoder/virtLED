@@ -9,34 +9,7 @@ maxTime = total of all frame durations
 function jakoLayer(programString) {
 
 	this.program = new Array();
-	this.frameTimes = new Array();
-	this.coordTrans = [
-		{ n: 'A', x: 0, y: 0 },
-		{ n: 'B', x: 1, y: 0 },
-		{ n: 'C', x: 2, y: 0 },
-		{ n: 'D', x: 3, y: 0 },
-		{ n: 'E', x: 4, y: 0 },
-		{ n: 'F', x: 4, y: 1 },
-		{ n: 'G', x: 3, y: 1 },
-		{ n: 'H', x: 2, y: 1 },
-		{ n: 'I', x: 1, y: 1 },
-		{ n: 'J', x: 0, y: 1 },
-		{ n: 'K', x: 0, y: 2 },
-		{ n: 'L', x: 1, y: 2 },
-		{ n: 'M', x: 2, y: 2 },
-		{ n: 'N', x: 3, y: 2 },
-		{ n: 'O', x: 4, y: 2 },
-		{ n: 'P', x: 4, y: 3 },
-		{ n: 'Q', x: 3, y: 3 },
-		{ n: 'R', x: 2, y: 3 },
-		{ n: 'S', x: 1, y: 3 },
-		{ n: 'T', x: 0, y: 3 },
-		{ n: 'U', x: 0, y: 4 },
-		{ n: 'V', x: 1, y: 4 },
-		{ n: 'W', x: 2, y: 4 },
-		{ n: 'X', x: 3, y: 4 },
-		{ n: 'Y', x: 4, y: 4 } ];
-					  
+	this.frameTimes = new Array();					  
 
 	this.load = function (programString) {
 		var frames = programString.split('\n');
@@ -53,32 +26,21 @@ function jakoLayer(programString) {
 
 				var index = 0;
 				while (index + 1 < alphaCoords.length) {
-					var layer = alphaCoords.substring(index, index + 1);
-					var position = alphaCoords.substring(index + 1, index + 2);
+					var color = alphaCoords.substring(index, index + 1);
+					var layer = alphaCoords.substring(index+1, index + 2);
+					var x = alphaCoords.substring(index + 2, index + 3);
+					var y = alphaCoords.substring(index + 3, index + 4);
 					
-					vectorCoords = this.coords(position);
 					if ( this.program[frameIndex] == undefined ) 
 						this.program[frameIndex] = new Array();
 
-					this.program[frameIndex].push({ x: vectorCoords.y, y: vectorCoords.x, z: layer - 1 });
+					this.program[frameIndex].push({ x: x , y: y , z: layer - 1, color: color });
 					//console.log('frame: ' + frameIndex + ' x: ' + vectorCoords.x + ' y: ' + layer + ' z: ' + vectorCoords.y);
 
 					index += 2;
 				}
 			}
 		}
-	};
-
-	this.coords = function( charCoord ) {
-		var result = null;
-		for ( var coordIndex in this.coordTrans ) {
-			if ( this.coordTrans[coordIndex].n == charCoord ) {
-				result = { x: this.coordTrans[coordIndex].x, 
-					y: this.coordTrans[coordIndex].y };
-				break;
-			}
-		}
-		return result;
 	};
 
 	this.whichFrame = function(elapsedTime) {
@@ -96,9 +58,10 @@ function jakoLayer(programString) {
 		return result;
 	}
 
-	this.isOn = function (x, y, z, elapsedTime) {		
+	this.ledState = function (x, y, z, elapsedTime) {		
 		var frame = this.whichFrame(elapsedTime);
 		var vecArray = this.program[frame];
+		var result = 'off';
 
 		if (vecArray != undefined) {
 			for (var iii in vecArray) {
@@ -106,7 +69,7 @@ function jakoLayer(programString) {
 				if (vec.x == x
 					&& vec.y == y
 					&& vec.z == z) {
-					return true;
+					result = vec.color;
 				}
 			}
 		}
