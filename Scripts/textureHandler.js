@@ -1,26 +1,36 @@
 ﻿
 
 function textureHandler() {
-	this.sphereOnTexture = null;
-	this.sphereOffTexture = null;
+	this.redTexture = null;
+	this.offTexture = null;
+	this.greenTexture = null;
 
 	this.init = function (gl) {
 		var handler = this;
-		this.sphereOffTexture = gl.createTexture();
-		this.sphereOffTexture.image = new Image();
-		this.sphereOffTexture.image.onload = function () {
-			handler.handleLoadedTexture(gl, handler.sphereOffTexture)
+		this.offTexture = gl.createTexture();
+		this.offTexture.image = new Image();
+		this.offTexture.image.onload = function () {
+			handler.handleLoadedTexture(gl, handler.offTexture)
 		}
 
-		this.sphereOffTexture.image.src = "images\\nehe.gif";
+		this.offTexture.image.src = "images\\nehe.gif";
 
-		this.sphereOnTexture = gl.createTexture();
-		this.sphereOnTexture.image = new Image();
-		this.sphereOnTexture.image.onload = function () {
-			handler.handleLoadedTexture(gl, handler.sphereOnTexture)
+		this.redTexture = gl.createTexture();
+		this.redTexture.image = new Image();
+		this.redTexture.image.onload = function () {
+			handler.handleLoadedTexture(gl, handler.redTexture)
 		}
 
-		this.sphereOnTexture.image.src = "images\\purple.gif";
+		this.redTexture.image.src = "images\\purple.gif";
+
+		this.greenTexture = gl.createTexture();
+		this.greenTexture.image = new Image();
+		this.greenTexture.image.onload = function () {
+			handler.handleLoadedTexture(gl, handler.greenTexture)
+		}
+
+		this.greenTexture.image.src = "images\\green.gif";
+		
 	}
 
 	this.handleLoadedTexture = function(gl, texture) {

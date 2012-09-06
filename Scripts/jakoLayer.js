@@ -34,7 +34,7 @@ function jakoLayer(programString) {
 					if ( this.program[frameIndex] == undefined ) 
 						this.program[frameIndex] = new Array();
 
-					this.program[frameIndex].push({ x: x , y: y , z: layer - 1, color: color });
+					this.program[frameIndex].push({ x: y, y: x, z: layer - 1, color: color });
 					//console.log('frame: ' + frameIndex + ' x: ' + vectorCoords.x + ' y: ' + layer + ' z: ' + vectorCoords.y);
 
 					index += 2;
@@ -74,7 +74,7 @@ function jakoLayer(programString) {
 			}
 		}
 
-		return false;
+		return result;
 	};
 
 	this.load(programString);

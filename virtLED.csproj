@@ -62,6 +62,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="default.html" />
+    <Content Include="images\green.gif" />
     <Content Include="images\purple.gif" />
     <Content Include="images\nehe.gif" />
     <Content Include="images\redX.gif" />
