@@ -463,7 +463,7 @@ function handleDragOver(evt) {
 }
 
 // decent registration program
-var cubePgm = new jakoLayer("r100g120r140r122r322g504r524g544:500\n");
+var cubePgm = new jakoLayer("r111g131r151r133r333g515r535g555:500\n");
 
 $().ready(function () {
 	webGLInit();
